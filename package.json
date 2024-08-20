@@ -1,0 +1,32 @@
+{
+  "name": "keepitstaked-docs",
+  "version": "1.0.0",
+  "description": "keepitstaked documentation",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KeepItStaked/keepitstaked-docs.git"
+  },
+  "keywords": [
+    "docs",
+    "nextra"
+  ],
+  "author": "KeepItStaked",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KeepItStaked/keepitstaked-docs/issues"
+  },
+  "homepage": "https://github.com/KeepItStaked/keepitstaked-docs#readme",
+  "dependencies": {
+    "next": "^14.2.5",
+    "nextra": "^2.13.4",
+    "nextra-theme-docs": "^2.13.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
