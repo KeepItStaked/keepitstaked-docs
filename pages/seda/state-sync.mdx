@@ -1,29 +1,32 @@
  Create state-sync script:
-        ```bash
-        cat <<EOF > $HOME/state-sync.sh
-        RPC={{ rpc }}
-        LATEST_HEIGHT=$(curl -s \$RPC/block | jq -r .result.block.header.height); \
-        BLOCK_HEIGHT=$((LATEST_HEIGHT - 1000)); \
-        TRUST_HASH=$(curl -s "\$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
-        echo $LATEST_HEIGHT $BLOCK_HEIGHT $TRUST_HASH
+```bash
+cat <<EOF > $HOME/state-sync.sh
+#!/bin/bash
 
-        sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-        s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$RPC,$RPC\"| ; \
-        s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-        s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-        s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $HOME/{{ folder }}/config/config.toml
-        EOF
+RPC={{ rpc }}
+LATEST_HEIGHT=\$(curl -s \$RPC/block | jq -r .result.block.header.height);
+BLOCK_HEIGHT=\$((LATEST_HEIGHT - 1000));
+TRUST_HASH=\$(curl -s "\$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
-        chmod +x $HOME/state-sync.sh
-        ```
-        Apply state-sync configuration to the node
-        ```bash copy
-        # stop and reset the node state
-        sudo systemctl stop {{ daemon }}
-        {{ daemon }} tendermint unsafe-reset-all --keep-addr-book
-        # run state-sync configuration
-        $HOME/state-sync.sh
-        # start the node 
-        sudo systemctl start {{ daemon }}
+echo \$LATEST_HEIGHT \$BLOCK_HEIGHT \$TRUST_HASH
+
+# sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"\$RPC,\$RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"\$TRUST_HASH\"| ; \
+s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" \$HOME/{{ folder }}/config/config.toml
+EOF
+
+chmod +x $HOME/state-sync.sh
+```
+Apply state-sync configuration to the node
+```bash copy
+# stop and reset the node state
+sudo systemctl stop {{ daemon }}
+{{ daemon }} tendermint unsafe-reset-all --keep-addr-book
+# run state-sync configuration
+$HOME/state-sync.sh
+# start the node 
+sudo systemctl start {{ daemon }}
 ```
