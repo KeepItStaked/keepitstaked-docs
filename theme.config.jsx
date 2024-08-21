@@ -18,7 +18,7 @@ export default {
   },
   toc: {
     float: true,
-    backTotop: true,
+    backToTop: true,
   },
   editLink: { //edit this page button
     text: "Help us to edit this page →",
