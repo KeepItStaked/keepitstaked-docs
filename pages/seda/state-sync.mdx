@@ -1,6 +1,6 @@
  Create state-sync script:
 
-```bash
+```bash copy
 cat <<EOF > $HOME/state-sync.sh
 #!/bin/bash
 
@@ -11,7 +11,7 @@ TRUST_HASH=\$(curl -s "\$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_i
 
 echo \$LATEST_HEIGHT \$BLOCK_HEIGHT \$TRUST_HASH
 
-# sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
 s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"\$RPC,\$RPC\"| ; \
 s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\$BLOCK_HEIGHT| ; \
 s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"\$TRUST_HASH\"| ; \
