@@ -36,7 +36,7 @@ Set node name: `MONIKER=<name>{:bash}`
 ```
 ##### Set peers and seeds
 ```bash copy
-sed -i "s/^seeds =.*/seeds = \"{{ seed }}\"/g" $HOME/{{ folder }}/config/config.toml
+sed -i "s/^seeds =.*/seeds = \"{{ seeds }}\"/g" $HOME/{{ folder }}/config/config.toml
 ```
 
 ##### Create systemd service file
