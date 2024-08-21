@@ -1,0 +1,82 @@
+import { Tabs } from 'nextra/components'
+
+# Seda installation guide
+
+### Prerequires
+
+- 4 CPU Cores
+- 32GB RAM
+- 1TB SSD
+- Ubuntu 22.04
+- Sudo account on server
+
+
+### Setup binary
+Choose an option which is better for you. We prefer to download prebuild binary, but you may want to build it from source
+<Tabs items={['Prebuild']}>
+    <Tabs.Tab>
+        ```bash copy
+        sudo wget https://github.com/sedaprotocol/seda-chain/releases/download/{{binary_version}}/sedad-amd64 -O /usr/local/bin/{{ daemon }}
+        sudo chmod +x /usr/local/bin/{{ daemon }}
+        ```
+    </Tabs.Tab>
+</Tabs>
+
+
+### Node's init and configuration
+
+##### Init
+Set node name: `MONIKER=<name>{:bash}`
+```bash copy
+    {{ daemon }} init $MONIKER --chain-id {{ chain_id }}
+```
+##### Download genesis
+```bash copy
+    wget https://raw.githubusercontent.com/sedaprotocol/seda-networks/main/mainnet/genesis.json -O $HOME/{{ folder }}/config/genesis.json
+```
+##### Set peers and seeds
+```bash copy
+sed -i "s/^seeds =.*/seeds = \"{{ seed }}\"/g" $HOME/{{ folder }}/config/config.toml
+```
+
+##### Create systemd service file
+```bash
+sudo tee /etc/systemd/system/{{ daemon }}.service > /dev/null <<EOF 
+[Unit]
+Description={{ daemon }} node service
+After=network-online.target 
+
+[Service]
+User=$USER
+ExecStart=$(which {{ daemon }}) start
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target 
+EOF
+
+sudo systemctl enable {{ daemon }}.service
+```
+
+
+##### Node syncronization
+
+Use one of the option to sync your node: 
+- [State-Sync](./state-sync)
+
+##### Run you node
+```bash
+# start service
+sudo systemctl start {{ daemon }}.service
+# check node's logs
+journalctl -u {{ daemon }} -f
+```
+
+
+### Finish
+This guide shows only a basic node setup. 
+* If you want to become a validator look this article 
+* Setup firewall rules to increase security
+
