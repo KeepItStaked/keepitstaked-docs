@@ -1,24 +1,19 @@
  Create state-sync script:
 
 ```bash copy
-cat <<EOF > $HOME/state-sync.sh
-#!/bin/bash
-
 RPC={{ rpc }}
-LATEST_HEIGHT=\$(curl -s \$RPC/block | jq -r .result.block.header.height);
-BLOCK_HEIGHT=\$((LATEST_HEIGHT - 1000));
-TRUST_HASH=\$(curl -s "\$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+LATEST_HEIGHT=$(curl -s $RPC/block | jq -r .result.block.header.height)
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
-echo \$LATEST_HEIGHT \$BLOCK_HEIGHT \$TRUST_HASH
 
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"\$RPC,\$RPC\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"\$TRUST_HASH\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" \$HOME/{{ folder }}/config/config.toml
-EOF
+sed -i \
+  -e "s|^enable *=.*|enable = true|" \
+  -e "s|^rpc_servers *=.*|rpc_servers = \"$RPC,$RPC\"|" \
+  -e "s|^trust_height *=.*|trust_height = $BLOCK_HEIGHT|" \
+  -e "s|^trust_hash *=.*|trust_hash = \"$TRUST_HASH\"|" \
+  $HOME/{{ folder }}/config/config.toml
 
-chmod +x $HOME/state-sync.sh
 ```
 Apply state-sync configuration to the node
 ```bash copy
