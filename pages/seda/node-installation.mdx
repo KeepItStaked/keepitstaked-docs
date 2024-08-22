@@ -1,8 +1,8 @@
 import { Tabs } from 'nextra/components'
 
-# Seda installation guide
+# Seda Installation Guide
 
-### Prerequires
+### Pre-Requirements
 
 - 4 CPU Cores
 - 32GB RAM
@@ -11,9 +11,9 @@ import { Tabs } from 'nextra/components'
 - Sudo account on server
 
 
-### Setup binary
-Choose an option which is better for you. We prefer to download prebuild binary, but you may want to build it from source
-<Tabs items={['Prebuild']}>
+### Setup Binary
+Choose an option which is better for you. We prefer to download pre-built binary, but you may want to build it from source.
+<Tabs items={['Pre-Built']}>
     <Tabs.Tab>
         ```bash copy
         sudo wget https://github.com/sedaprotocol/seda-chain/releases/download/{{binary_version}}/sedad-amd64 -O /usr/local/bin/{{ daemon }}
@@ -23,23 +23,23 @@ Choose an option which is better for you. We prefer to download prebuild binary,
 </Tabs>
 
 
-### Node's init and configuration
+### Node's Init and Configuration
 
 ##### Init
 Set node name: `MONIKER=<name>{:bash}`
 ```bash copy
 {{ daemon }} init $MONIKER --chain-id {{ chain_id }}
 ```
-##### Download genesis
+##### Download Genesis
 ```bash copy
 wget https://raw.githubusercontent.com/sedaprotocol/seda-networks/main/mainnet/genesis.json -O $HOME/{{ folder }}/config/genesis.json
 ```
-##### Set peers and seeds
+##### Set Peers and Seeds
 ```bash copy
 sed -i "s/^seeds =.*/seeds = \"{{ seeds }}\"/g" $HOME/{{ folder }}/config/config.toml
 ```
 
-##### Create systemd service file
+##### Create Systemd Service File
 ```bash
 sudo tee /etc/systemd/system/{{ daemon }}.service > /dev/null <<EOF 
 [Unit]
@@ -61,12 +61,12 @@ sudo systemctl enable {{ daemon }}.service
 ```
 
 
-##### Node syncronization
+##### Node Synchronization
 
 Use one of the option to sync your node: 
 - [State-Sync](./state-sync)
 
-##### Run you node
+##### Run The Node
 ```bash
 # start service
 sudo systemctl start {{ daemon }}.service
@@ -77,6 +77,6 @@ journalctl -u {{ daemon }} -f
 
 ### Finish
 This guide shows only a basic node setup. 
-* If you want to become a validator look this article 
+* If you want to become a validator look this article
 * Setup firewall rules to increase security
 
