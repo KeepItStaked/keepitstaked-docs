@@ -9,8 +9,8 @@ export default {
       titleTemplate: '%s | KiS'
     }
   },
-  primaryHue: { dark: 300, light: 260},
-  primarySaturation: { dark: 100, light: 100},
+  primaryHue: { dark: 273, light: 260},
+  primarySaturation: { dark: 65, light: 100},
   sidebar: {
     defaultMenuCollapseLevel: 2,
     autoCollapse: true,
