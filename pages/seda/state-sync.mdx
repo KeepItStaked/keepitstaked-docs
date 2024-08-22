@@ -1,11 +1,22 @@
- Create state-sync script:
+State sync mechanism synchronizes the blockchain state across nodes by downloading and verifying the necessary state data from peers, allowing new or offline nodes to quickly catch up with the network. This process minimizes resource use and time for nodes to reach consensus by requesting only the latest relevant state data rather than the entire blockchain history.
 
+
+Prepare node to state-sync:
+```bash copy
+# stop the node
+sudo systemctl stop {{ daemon }}
+# backup priv_validator_state.json
+mv $HOME/{{ folder }}/data/priv_validator_state.json $HOME/{{ folder }}/priv_validator_state.json.bak
+# reset node state
+{{ daemon }} tendermint unsafe-reset-all --keep-addr-book
+```
+
+Run state-sync script: 
 ```bash copy
 RPC={{ rpc }}
 LATEST_HEIGHT=$(curl -s $RPC/block | jq -r .result.block.header.height)
 BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
 TRUST_HASH=$(curl -s "$RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-
 
 sed -i \
   -e "s|^enable *=.*|enable = true|" \
@@ -13,15 +24,12 @@ sed -i \
   -e "s|^trust_height *=.*|trust_height = $BLOCK_HEIGHT|" \
   -e "s|^trust_hash *=.*|trust_hash = \"$TRUST_HASH\"|" \
   $HOME/{{ folder }}/config/config.toml
-
 ```
-Apply state-sync configuration to the node
+
+Start the node
 ```bash copy
 # stop and reset the node state
-sudo systemctl stop {{ daemon }}
-{{ daemon }} tendermint unsafe-reset-all --keep-addr-book
-# run state-sync configuration
-$HOME/state-sync.sh
-# start the node 
 sudo systemctl start {{ daemon }}
+# check logs
+journalctl -u {{ daemon }} -f 
 ```
