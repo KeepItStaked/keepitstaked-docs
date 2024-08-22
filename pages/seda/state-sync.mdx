@@ -28,8 +28,10 @@ sed -i \
 
 Start the node
 ```bash copy
-# stop and reset the node state
+# recover priv_validator_state.json
+mv $HOME/{{ folder }}/priv_validator_state.json.bak $HOME/{{ folder }}/data/priv_validator_state.json
+
+# stop and reset the node state and show logs
 sudo systemctl start {{ daemon }}
-# check logs
 journalctl -u {{ daemon }} -f 
 ```
