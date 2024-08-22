@@ -10,7 +10,7 @@ export default {
     }
   },
   primaryHue: { dark: 273, light: 260},
-  primarySaturation: { dark: 65, light: 100},
+  primarySaturation: { dark: 75, light: 100},
   sidebar: {
     defaultMenuCollapseLevel: 2,
     autoCollapse: true,
