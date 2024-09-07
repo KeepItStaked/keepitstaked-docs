@@ -1,0 +1,107 @@
+import { useData } from "nextra/data"
+
+export const getStaticProps = ({ params }) => {
+    return fetch('https://snapshots.keepitstaked.com/mainnet/seda/metadata.json')
+        .then(res => res.json())
+        .then(data => ({
+            props: {
+                ssg: {
+                    snapshot_size: data.snapshot_size / 1024,
+                    snapshot_link: data.snapshot_link,
+                    date: data.date,
+                    height: data.height,
+                }
+            },
+            revalidate: 60
+        }))
+}
+export const humanFileSize = (bytes, si = false, dp = 1) => {
+    const thresh = si ? 1000 : 1024;
+
+    if (Math.abs(bytes) < thresh) {
+        return bytes + ' B';
+    }
+
+    const units = si
+        ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    let u = 0; // idk why but it was -1 I set 0 and all is fine. This stackoverflow is lying 
+    const r = 10 ** dp;
+
+    do {
+        bytes /= thresh;
+        ++u;
+    } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+    return bytes.toFixed(dp) + ' ' + units[u];
+}
+
+export const CreationDate = () => {
+    const { date } = useData()
+    return new Date(date * 1000).toLocaleString();
+}
+
+export const SnapshotSize = () => {
+    const { snapshot_size } = useData()
+    return humanFileSize(snapshot_size);
+}
+
+export const WasmSize = () => {
+    const { wasm_size } = useData()
+    return humanFileSize(wasm_size);
+}
+
+export const Height = () => {
+    const { height } = useData()
+    return height;
+}
+
+export const DownloadLink = () => {
+    const { snapshot_link, filename = "latest.tar.lz4" } = useData()
+    return (
+        <a href={snapshot_link}> {filename} </a>
+    )
+}
+
+
+# SEDA Snapshot
+
+Node's snapshot is as one of the options for quickly synchronizing your node within the network. It can be useful for quickly restoring the node in case of failure, as well as for minimizing the database size and resource consumption on disk.
+
+### Network Info 
+**chain-id:** `{{ chain_id }}` <br/>
+**node version:** `{{ binary_version }}`
+
+### Snapshot Info 
+| Height        | Created             | Size             | Link             |
+| :-----        | :----               | :----            | :----            | 
+| <Height />    |    <CreationDate /> | <SnapshotSize /> | <DownloadLink />
+
+### Snapshot Installation Guide
+
+**Prepare the node to snapshot:**
+```bash copy
+# stop the node
+systemctl stop {{ daemon }}
+# backup priv_validator_state.json
+mv $HOME/{{ folder }}/data/priv_validator_state.json $HOME/{{ folder }}/priv_validator_state.json.bak
+```
+
+**Download and extract snapshot:**
+```bash copy
+# download snapshot
+wget {{ snapshot_link }}
+# extract archive to {{ network }} default folder
+tar -I lz4 -xv -C $HOME/{{ folder }}
+```
+
+**Start the node:**
+```bash copy 
+# recover priv_validator_state.json
+mv $HOME/{{ folder }}/priv_validator_state.json.bak $HOME/{{ folder }}/data/priv_validator_state.json
+ 
+# stop and reset the node state and show logs
+sudo systemctl start {{ daemon }}
+journalctl -u {{ daemon }} -f 
+```

@@ -3,7 +3,7 @@
 The state-sync mechanism synchronizes the blockchain state across nodes by downloading and verifying the necessary state data from peers, allowing new or offline nodes to catch up with the network quickly. This process minimizes resource use and time for nodes to reach consensus by requesting only the latest relevant state data rather than the entire blockchain history.
 
 
-**Prepare node to state-sync:**
+**Prepare node to "State-Sync":**
 ```bash copy
 # stop the node
 sudo systemctl stop {{ daemon }}
@@ -13,7 +13,7 @@ mv $HOME/{{ folder }}/data/priv_validator_state.json $HOME/{{ folder }}/priv_val
 {{ daemon }} tendermint unsafe-reset-all --keep-addr-book
 ```
 
-**Run state-sync script:**
+**Run "State-Sync" script:**
 ```bash copy
 RPC={{ rpc }}
 LATEST_HEIGHT=$(curl -s $RPC/block | jq -r .result.block.header.height)
