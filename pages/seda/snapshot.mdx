@@ -1,6 +1,6 @@
 import { useData } from "nextra/data"
 
-export const getStaticProps = ({ params }) => {
+export const getServerSideProps = ({ params }) => {
     return fetch('https://snapshots.keepitstaked.com/mainnet/seda/metadata.json')
         .then(res => res.json())
         .then(data => ({
@@ -12,7 +12,6 @@ export const getStaticProps = ({ params }) => {
                     height: data.height,
                 }
             },
-            revalidate: 1
         }))
 }
 export const humanFileSize = (bytes, si = false, dp = 1) => {
