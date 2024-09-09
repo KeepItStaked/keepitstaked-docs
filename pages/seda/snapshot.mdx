@@ -92,7 +92,7 @@ mv $HOME/{{ folder }}/data/priv_validator_state.json $HOME/{{ folder }}/priv_val
 # download snapshot
 wget {{ snapshot_link }}
 # extract archive to {{ network }} default folder
-tar -I lz4 -xv -C $HOME/{{ folder }}
+tar -I lz4 -xvf latest.tar.lz4 -C $HOME/{{ folder }}
 ```
 
 **Start the node:**
